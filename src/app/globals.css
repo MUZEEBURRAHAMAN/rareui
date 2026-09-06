@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fafafa;
+  --bg-card: #ffffff;
+  --bg-elevated: #f4f4f5;
+  --bg-input: #ffffff;
+  --text-primary: #09090b;
+  --text-secondary: #52525b;
+  --text-muted: #a1a1aa;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --accent: #18181b;
+  --accent-text: #fafafa;
+  --accent-hover: #27272a;
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --destructive: #dc2626;
+  --ring: #a1a1aa;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #09090b;
+    --bg-card: #18181b;
+    --bg-elevated: #27272a;
+    --bg-input: #1c1c1f;
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --accent: #fafafa;
+    --accent-text: #09090b;
+    --accent-hover: #e4e4e7;
+    --success: #4ade80;
+    --success-bg: #052e16;
+    --destructive: #f87171;
+    --ring: #52525b;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #09090b;
+  --bg-card: #18181b;
+  --bg-elevated: #27272a;
+  --bg-input: #1c1c1f;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --accent: #fafafa;
+  --accent-text: #09090b;
+  --accent-hover: #e4e4e7;
+  --success: #4ade80;
+  --success-bg: #052e16;
+  --destructive: #f87171;
+  --ring: #52525b;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Toaster overrides ─────────────────────────────────── */
+[data-sonner-toaster] {
+  font-family: inherit !important;
+}
