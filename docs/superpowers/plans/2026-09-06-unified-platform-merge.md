@@ -520,7 +520,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Test: `npx tsc --noEmit`
 
 **Interfaces:**
-- Consumes: `CloseIcon`, `CheckIcon` (Task 4)
+- Consumes: `CloseIcon` (both files) and `InfoIcon` (`CodeModal` only) (Task 4) — verified against the actual source imports, not `CheckIcon` as originally assumed
 - Produces: `CodeModal`, `PromptModal` — consumed by `PrimitiveShowcase` (Task 8) and `ComponentDetailPage` (Task 7)
 
 - [ ] **Step 1: Copy both files, add `"use client"`**
@@ -587,7 +587,7 @@ No `"use client"` directives needed on any of these — they're plain TypeScript
 - [ ] **Step 2: Verify with typecheck**
 
 Run: `npx tsc --noEmit`
-Expected: no new errors.
+Expected: exactly 3 errors, all `TS2307: Cannot find module`, in `data/commandItems.ts`, `data/formSteps.ts`, `data/outlineItems.ts` — each imports a *type* from its corresponding component module (`@/components/command-palette`, `@/components/adaptive-form`, `@/components/edge-stepper`), which doesn't exist until Tasks 9–11 create it. This is expected and self-resolving, not a defect — do not treat it as a blocker for this task. (Corrected after Task 6's first implementation run surfaced this — the plan originally and incorrectly said "no new errors" here.)
 
 - [ ] **Step 3: Commit**
 
@@ -976,11 +976,14 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Create: `rareui-components/src/components/adaptive-form/useAdaptiveForm.ts`
 - Create: `rareui-components/src/components/adaptive-form/index.ts`
 - Create: `rareui-components/src/app/components/adaptive-form/page.tsx`
+- Create: `rareui-components/src/app/components/adaptive-form/AdaptiveFormDemo.tsx`
 - Test: manual, via dev server
 
 **Interfaces:**
 - Consumes: `cn` (Task 4), `ComponentDetailPage` (Task 7), `sampleFormSteps` data (Task 6)
-- Produces: `AdaptiveFormFlow` component rendered at `/components/adaptive-form`
+- Produces: `AdaptiveFormFlow` component rendered at `/components/adaptive-form`; the `AdaptiveFormDemo` Client Component (Step 2b) is also reused directly by Task 12's homepage
+
+**Correctness note (ruled on after Task 10 surfaced the same issue):** a Server Component cannot pass an inline function (e.g. `onSubmit={(v) => ...}`) as a prop into a Client Component — Next.js RSC rejects non-serializable props crossing the server→client boundary, even when the target component is itself already a Client Component. `page.tsx` here is a Server Component (it needs `fs.readFileSync`), so the `onSubmit` callback must be owned by a small Client Component wrapper instead of passed inline — same pattern as Task 9's `EdgeStepperDemo` and the `CommandPaletteDemo` wrapper Task 10's implementer added when it hit this exact crash.
 
 - [ ] **Step 1: Copy the 3 component files + hook + barrel verbatim, adding `"use client"` where needed**
 
@@ -993,15 +996,35 @@ cp "$SRC"/*.tsx "$SRC"/*.ts "$DEST/"
 
 Add `"use client";` as line 1 to `AdaptiveFormFlow.tsx`, `FormField.tsx`, `useAdaptiveForm.ts` (use hooks, confirmed by grep). `StepIndicator.tsx` is presentational (no hooks) but is only ever rendered inside the already-client `AdaptiveFormFlow` tree — leave it unchanged, no directive needed. `index.ts` needs no directive.
 
-- [ ] **Step 2: Create the detail page**
+- [ ] **Step 2a: Create the Client Component demo wrapper (owns the `onSubmit` closure)**
+
+```tsx
+// rareui-components/src/app/components/adaptive-form/AdaptiveFormDemo.tsx
+"use client";
+
+import { AdaptiveFormFlow } from "@/components/adaptive-form";
+import { sampleFormSteps } from "@/data/formSteps";
+
+export function AdaptiveFormDemo() {
+  return (
+    <AdaptiveFormFlow
+      steps={sampleFormSteps}
+      onSubmit={(v) => console.log("Form submitted:", v)}
+    />
+  );
+}
+```
+
+Matches the convention Task 10's `CommandPaletteDemo` already established: the wrapper owns only the interactive piece (the callback), not layout — the positioning `<div className="absolute inset-0 flex items-center justify-center">` stays in the consuming Server Component (Step 2b below), same as `CommandPaletteDemo`'s own consumer does. This keeps both wrappers reusable the same way on both the detail page and Task 12's homepage.
+
+- [ ] **Step 2b: Create the detail page as a Server Component rendering the wrapper**
 
 ```tsx
 // rareui-components/src/app/components/adaptive-form/page.tsx
 import { readFileSync } from "fs";
 import { join } from "path";
 import { ComponentDetailPage } from "@/components/ui/ComponentDetailPage";
-import { AdaptiveFormFlow } from "@/components/adaptive-form";
-import { sampleFormSteps } from "@/data/formSteps";
+import { AdaptiveFormDemo } from "./AdaptiveFormDemo";
 
 function readSource(relativePath: string): string {
   return readFileSync(
@@ -1033,15 +1056,14 @@ export default function AdaptiveFormPage() {
       files={files}
     >
       <div className="absolute inset-0 flex items-center justify-center">
-        <AdaptiveFormFlow
-          steps={sampleFormSteps}
-          onSubmit={(v) => console.log("Form submitted:", v)}
-        />
+        <AdaptiveFormDemo />
       </div>
     </ComponentDetailPage>
   );
 }
 ```
+
+`page.tsx` now renders `<AdaptiveFormDemo />` (a Client Component that owns the `onSubmit` callback internally) instead of passing the callback inline as a prop from the Server Component — this avoids the RSC "functions cannot cross the server→client boundary" crash that Task 10 hit with the equivalent `onSelect` pattern.
 
 - [ ] **Step 3: Verify via dev server**
 
@@ -1067,10 +1089,12 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Test: manual, via dev server
 
 **Interfaces:**
-- Consumes: `PrimitiveShowcase`, `CategorySection` (Task 8), `EdgeStepperDemo` (Task 9), `CommandPalette`/`AdaptiveFormFlow` component groups (Tasks 10–11), sample data (Task 6)
+- Consumes: `PrimitiveShowcase`, `CategorySection` (Task 8), `EdgeStepperDemo` (Task 9), `CommandPaletteDemo` (Task 10), `AdaptiveFormDemo` (Task 11), sample data (Task 6)
 - Produces: nothing consumed by later tasks — this is the terminal homepage
 
 **Correctness note:** the current Vite `App.tsx` passes `code`/`filePath`/`extraFiles` to every `PrimitiveShowcase` card (read via `?raw` imports), which is what makes the cards' "AI prompt" and "View code" hover buttons actually do something — `PrimitiveShowcase` no-ops both (`if (code) ...`) when `code` is missing. The homepage must therefore read each component's source files the same way the three detail pages do (Tasks 9–11), which means it **cannot** be a single top-level `"use client"` file — `fs.readFileSync` is server-only. It's split the same way Task 9 split Edge Stepper: a Server Component `page.tsx` that reads files and passes `code`/`filePath`/`extraFiles` down, reusing the already-built Client Component pieces for the interactive parts.
+
+**Second correctness note (ruled on after Task 10 surfaced this crash, and already fixed in Tasks 10–11's own briefs before this task was dispatched):** a Server Component cannot pass an inline function (`onSelect`/`onSubmit`) as a prop into a Client Component — Next.js RSC rejects non-serializable props crossing the boundary. Since this homepage is a Server Component (needs `fs.readFileSync`), it must NOT render `<CommandPalette onSelect={...} />` or `<AdaptiveFormFlow onSubmit={...} />` directly with inline callbacks. Instead it reuses the `CommandPaletteDemo` and `AdaptiveFormDemo` Client Component wrappers that Tasks 10 and 11 already created for exactly this reason — the same way it already reuses `EdgeStepperDemo` from Task 9. All three cards follow one consistent pattern.
 
 - [ ] **Step 1: Move the current Library catalog page to `/library`**
 
@@ -1090,10 +1114,8 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { PrimitiveShowcase, CategorySection } from "@/components/ui";
 import { EdgeStepperDemo } from "./components/edge-stepper/EdgeStepperDemo";
-import { CommandPalette } from "@/components/command-palette";
-import { sampleCommands } from "@/data/commandItems";
-import { AdaptiveFormFlow } from "@/components/adaptive-form";
-import { sampleFormSteps } from "@/data/formSteps";
+import { CommandPaletteDemo } from "./components/command-palette/CommandPaletteDemo";
+import { AdaptiveFormDemo } from "./components/adaptive-form/AdaptiveFormDemo";
 
 function readSource(dir: string, relativePath: string): string {
   return readFileSync(join(process.cwd(), dir, relativePath), "utf-8");
@@ -1229,11 +1251,7 @@ export default function HomePage() {
             foundationHref="/theme.css"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <CommandPalette
-                commands={sampleCommands}
-                onSelect={(cmd) => console.log("Selected:", cmd.label)}
-                embedded
-              />
+              <CommandPaletteDemo />
             </div>
           </PrimitiveShowcase>
         </CategorySection>
@@ -1258,10 +1276,7 @@ export default function HomePage() {
             foundationHref="/theme.css"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <AdaptiveFormFlow
-                steps={sampleFormSteps}
-                onSubmit={(v) => console.log("Form submitted:", v)}
-              />
+              <AdaptiveFormDemo />
             </div>
           </PrimitiveShowcase>
         </CategorySection>
@@ -1281,7 +1296,7 @@ export default function HomePage() {
 }
 ```
 
-`EdgeStepperDemo` is imported from `./components/edge-stepper/EdgeStepperDemo` — the exact Client Component file Task 9 Step 3 already created at `src/app/components/edge-stepper/EdgeStepperDemo.tsx`. It's reused here unchanged (same scroll-nav logic, same `sampleOutline`/`contentBlocks` data), so the homepage's Edge Stepper demo and its detail-page demo are guaranteed to behave identically. `CommandPalette` and `AdaptiveFormFlow` are rendered directly as children of this Server Component — legal in Next.js (a Server Component can render an already-`"use client"` component as a normal child), no additional wrapper needed since neither has scroll-nav logic like Edge Stepper does.
+`EdgeStepperDemo`, `CommandPaletteDemo`, and `AdaptiveFormDemo` are each imported from the paths Tasks 9, 10, and 11 already created them at (`./components/edge-stepper/EdgeStepperDemo`, `./components/command-palette/CommandPaletteDemo`, `./components/adaptive-form/AdaptiveFormDemo`). All three are reused here unchanged — same data, same callbacks — so the homepage's demos and each detail page's own demo are guaranteed to behave identically. All three wrappers follow the same shape: a small Client Component that owns only the piece that can't cross the Server→Client boundary (a scroll-nav callback for Edge Stepper, a selection/submit callback for the other two), with the positioning `<div>` kept in the consuming page rather than baked into the wrapper.
 
 Note the two concrete link fixes called out in the spec: `expandUrl` now points to `/components/edge-stepper`, `/components/command-palette`, `/components/adaptive-form` (not the old `.html` paths), and `foundationHref` now points to `/theme.css` (not a Vite `?url` import) — both already applied above, alongside the `code`/`filePath`/`extraFiles` fix. The nav/GitHub markup from the old `App.tsx` is dropped entirely — `SiteHeader` (Task 2) already provides it globally, and the footer's own "Components"/"GitHub" links are dropped too since they duplicate the shared nav.
 

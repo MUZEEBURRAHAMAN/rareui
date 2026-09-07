@@ -1,259 +1,185 @@
-"use client";
+// rareui-components/src/app/page.tsx
+import { readFileSync } from "fs";
+import { join } from "path";
+import { PrimitiveShowcase, CategorySection } from "@/components/ui";
+import { EdgeStepperDemo } from "./components/edge-stepper/EdgeStepperDemo";
+import { CommandPaletteDemo } from "./components/command-palette/CommandPaletteDemo";
+import { AdaptiveFormDemo } from "./components/adaptive-form/AdaptiveFormDemo";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import type { ComponentCard as ComponentCardType, Category } from "@/lib/types";
-import { ComponentCard } from "@/components/ComponentCard";
-import { CategoryFilter } from "@/components/CategoryFilter";
-import { SearchBar } from "@/components/SearchBar";
-import { ComponentSideSheet } from "@/components/ComponentSideSheet";
+function readSource(dir: string, relativePath: string): string {
+  return readFileSync(join(process.cwd(), dir, relativePath), "utf-8");
+}
 
-// Default categories — used if Supabase isn't configured yet
-const DEFAULT_CATEGORIES: Category[] = [
-  { id: "website", label: "Website", order_index: 1 },
-  { id: "mobile", label: "Mobile", order_index: 2 },
-  { id: "dashboard", label: "Dashboard", order_index: 3 },
-  { id: "marketing", label: "Marketing", order_index: 4 },
-  { id: "ecommerce", label: "E-commerce", order_index: 5 },
-  { id: "saas", label: "SaaS", order_index: 6 },
-];
-
-export default function CatalogPage() {
-  const [components, setComponents] = useState<ComponentCardType[]>([]);
-  const [categories] = useState<Category[]>(DEFAULT_CATEGORIES);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [total, setTotal] = useState(0);
-  const [selectedComponent, setSelectedComponent] = useState<ComponentCardType | null>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
-
-  const fetchComponents = useCallback(
-    async (cat: string, q: string) => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams();
-        if (cat !== "all") params.set("category", cat);
-        if (q) params.set("search", q);
-        params.set("limit", "50");
-
-        const res = await fetch(`/api/components?${params.toString()}`);
-        if (!res.ok) throw new Error("Failed to fetch");
-
-        const data = await res.json();
-        setComponents(data.components || []);
-        setTotal(data.total || 0);
-      } catch (err) {
-        console.error("Fetch failed:", err);
-        setComponents([]);
-      } finally {
-        setLoading(false);
-      }
+export default function HomePage() {
+  const edgeStepperFiles = [
+    {
+      name: "EdgeStepper.tsx",
+      code: readSource("src/components/edge-stepper", "EdgeStepper.tsx"),
     },
-    []
-  );
+    {
+      name: "useEdgeStepper.ts",
+      code: readSource("src/components/edge-stepper", "useEdgeStepper.ts"),
+    },
+    {
+      name: "TickRail.tsx",
+      code: readSource("src/components/edge-stepper", "TickRail.tsx"),
+    },
+    {
+      name: "OutlinePanel.tsx",
+      code: readSource("src/components/edge-stepper", "OutlinePanel.tsx"),
+    },
+    {
+      name: "OutlineItem.tsx",
+      code: readSource("src/components/edge-stepper", "OutlineItem.tsx"),
+    },
+  ];
 
-  // Fetch on mount and when filters change
-  useEffect(() => {
-    fetchComponents(selectedCategory, search);
-  }, [selectedCategory, fetchComponents]);
+  const commandPaletteFiles = [
+    {
+      name: "CommandPalette.tsx",
+      code: readSource("src/components/command-palette", "CommandPalette.tsx"),
+    },
+    {
+      name: "useCommandPalette.ts",
+      code: readSource(
+        "src/components/command-palette",
+        "useCommandPalette.ts"
+      ),
+    },
+    {
+      name: "CommandGroup.tsx",
+      code: readSource("src/components/command-palette", "CommandGroup.tsx"),
+    },
+    {
+      name: "CommandRow.tsx",
+      code: readSource("src/components/command-palette", "CommandRow.tsx"),
+    },
+  ];
 
-  // Debounced search
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchComponents(selectedCategory, search);
-    }, 300);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [search, selectedCategory, fetchComponents]);
+  const adaptiveFormFiles = [
+    {
+      name: "AdaptiveFormFlow.tsx",
+      code: readSource("src/components/adaptive-form", "AdaptiveFormFlow.tsx"),
+    },
+    {
+      name: "useAdaptiveForm.ts",
+      code: readSource("src/components/adaptive-form", "useAdaptiveForm.ts"),
+    },
+    {
+      name: "StepIndicator.tsx",
+      code: readSource("src/components/adaptive-form", "StepIndicator.tsx"),
+    },
+    {
+      name: "FormField.tsx",
+      code: readSource("src/components/adaptive-form", "FormField.tsx"),
+    },
+  ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px" }}>
-        {/* Hero */}
-        <div style={{ marginBottom: 32 }}>
-          <h1
-            style={{
-              fontSize: 28,
-              fontWeight: 700,
-              margin: "0 0 8px",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            UI Components
-          </h1>
-          <p
-            style={{
-              fontSize: 15,
-              color: "var(--text-secondary)",
-              margin: 0,
-              maxWidth: "42em",
-              lineHeight: 1.5,
-            }}
-          >
-            Browse components, click copy, paste into Figma. No plugins, no
-            extensions — just Ctrl+V.
-          </p>
+    <div className="mx-auto min-h-svh max-w-4xl">
+      {/* ── Hero ── */}
+      <header className="flex flex-col items-center px-5 pt-16 pb-20 text-center sm:px-8 sm:pt-24 sm:pb-28">
+        <div className="mb-6 inline-flex items-center rounded-full border border-accent/20 bg-accent-dim px-4 py-1.5 text-[12px] font-medium text-accent">
+          Free to use UI components
         </div>
-
-        {/* Filters */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 16,
-            marginBottom: 24,
-            flexWrap: "wrap",
-          }}
+        <h1 className="max-w-xl text-[32px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[48px]">
+          UI components{" "}
+          <span className="text-ink-3">for modern apps</span>
+        </h1>
+        <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ink-3">
+          Beautifully crafted, copy-paste primitives for everything your app
+          needs: navigation, forms, commands, and more.
+        </p>
+        <a
+          href="#components"
+          className="mt-8 inline-flex items-center rounded-full bg-ink px-6 py-2.5 text-[13px] font-semibold text-canvas transition-opacity hover:opacity-90"
         >
-          <CategoryFilter
-            categories={categories}
-            selected={selectedCategory}
-            onSelect={setSelectedCategory}
-          />
-          <SearchBar value={search} onChange={setSearch} />
-        </div>
+          Browse components
+        </a>
+      </header>
 
-        {/* Results count */}
-        <div
-          style={{
-            fontSize: 13,
-            color: "var(--text-muted)",
-            marginBottom: 16,
-          }}
-        >
-          {loading
-            ? "Loading..."
-            : `${total} component${total !== 1 ? "s" : ""}`}
-        </div>
-
-        {/* Grid */}
-        {!loading && components.length === 0 ? (
-          <EmptyState hasSearch={!!search || selectedCategory !== "all"} />
-        ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: 16,
-            }}
+      {/* ── Components ── */}
+      <div id="components" className="scroll-mt-8">
+        <CategorySection title="Navigation & Discovery" count={2}>
+          <PrimitiveShowcase
+            title="Edge Stepper"
+            description="Hover-reveal conversation outline with hierarchical navigation."
+            category="Navigation"
+            minHeight={420}
+            expandUrl="/components/edge-stepper"
+            code={edgeStepperFiles[0].code}
+            filePath="components/edge-stepper/EdgeStepper.tsx"
+            extraFiles={edgeStepperFiles.slice(1).map((f) => ({
+              path: f.name,
+              code: f.code,
+            }))}
+            codeNote="Self-contained — needs only the foundation tokens."
+            installCommand="npx rareui add edge-stepper"
+            foundationFile="src/app/globals.css"
+            foundationHref="/theme.css"
           >
-            {loading
-              ? Array.from({ length: 6 }).map((_, i) => (
-                  <SkeletonCard key={i} />
-                ))
-              : components.map((comp) => (
-                  <ComponentCard key={comp.id} component={comp} onClick={() => setSelectedComponent(comp)} />
-                ))}
-          </div>
-        )}
-      </main>
+            <EdgeStepperDemo />
+          </PrimitiveShowcase>
 
-      <ComponentSideSheet
-        component={selectedComponent}
-        onClose={() => setSelectedComponent(null)}
-      />
+          <PrimitiveShowcase
+            title="AI Command Palette"
+            description="One command center for everything."
+            category="AI"
+            staggerDelay={100}
+            minHeight={420}
+            expandUrl="/components/command-palette"
+            code={commandPaletteFiles[0].code}
+            filePath="components/command-palette/CommandPalette.tsx"
+            extraFiles={commandPaletteFiles.slice(1).map((f) => ({
+              path: f.name,
+              code: f.code,
+            }))}
+            codeNote="Self-contained — needs only the foundation tokens."
+            installCommand="npx rareui add command-palette"
+            foundationFile="src/app/globals.css"
+            foundationHref="/theme.css"
+          >
+            <div className="absolute inset-0 flex items-center justify-center">
+              <CommandPaletteDemo />
+            </div>
+          </PrimitiveShowcase>
+        </CategorySection>
 
-      {/* Footer */}
-      <footer
-        style={{
-          borderTop: "1px solid var(--border)",
-          padding: "24px",
-          textAlign: "center",
-          fontSize: 13,
-          color: "var(--text-muted)",
-          marginTop: 64,
-        }}
-      >
-        Built with RareUI · Copy components, paste into Figma
-      </footer>
-    </div>
-  );
-}
-
-function EmptyState({ hasSearch }: { hasSearch: boolean }) {
-  return (
-    <div
-      style={{
-        padding: "80px 24px",
-        textAlign: "center",
-        color: "var(--text-muted)",
-      }}
-    >
-      <svg
-        width="48"
-        height="48"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{ margin: "0 auto 16px", opacity: 0.5 }}
-      >
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
-      </svg>
-      <p style={{ fontSize: 15, fontWeight: 500, margin: "0 0 8px" }}>
-        {hasSearch ? "No components found" : "No components yet"}
-      </p>
-      <p style={{ fontSize: 13, margin: 0 }}>
-        {hasSearch
-          ? "Try a different search or category."
-          : "Go to Admin to extract and upload your first Figma component."}
-      </p>
-    </div>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div
-      style={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: 12,
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          aspectRatio: "16/10",
-          background: "var(--bg-elevated)",
-          animation: "pulse 1.5s ease-in-out infinite",
-        }}
-      />
-      <div style={{ padding: "12px 14px 14px" }}>
-        <div
-          style={{
-            height: 14,
-            width: "60%",
-            background: "var(--bg-elevated)",
-            borderRadius: 4,
-            marginBottom: 8,
-            animation: "pulse 1.5s ease-in-out infinite",
-          }}
-        />
-        <div
-          style={{
-            height: 12,
-            width: "40%",
-            background: "var(--bg-elevated)",
-            borderRadius: 4,
-            animation: "pulse 1.5s ease-in-out infinite",
-          }}
-        />
+        <CategorySection title="Forms & Input" count={1}>
+          <PrimitiveShowcase
+            title="Adaptive Form Flow"
+            description="Forms that think ahead — fields appear based on prior answers."
+            category="Forms"
+            staggerDelay={0}
+            minHeight={420}
+            expandUrl="/components/adaptive-form"
+            code={adaptiveFormFiles[0].code}
+            filePath="components/adaptive-form/AdaptiveFormFlow.tsx"
+            extraFiles={adaptiveFormFiles.slice(1).map((f) => ({
+              path: f.name,
+              code: f.code,
+            }))}
+            codeNote="Self-contained — needs only the foundation tokens."
+            installCommand="npx rareui add adaptive-form"
+            foundationFile="src/app/globals.css"
+            foundationHref="/theme.css"
+          >
+            <div className="absolute inset-0 flex items-center justify-center">
+              <AdaptiveFormDemo />
+            </div>
+          </PrimitiveShowcase>
+        </CategorySection>
       </div>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
+
+      {/* ── Footer ── */}
+      <footer className="flex flex-col items-center gap-3 border-t border-line/40 px-5 py-12 text-center sm:px-8">
+        <span className="text-[14px] font-semibold text-ink">
+          Rare<span className="text-accent">UI</span>
+        </span>
+        <p className="text-[12px] leading-relaxed text-ink-4">
+          Built with React + Tailwind CSS v4 · Copy-paste · Tree-shakeable
+        </p>
+      </footer>
     </div>
   );
 }
