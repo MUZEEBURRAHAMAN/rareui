@@ -241,142 +241,81 @@ export default function AdminPage() {
   }, [extracted, name, category, tags, description, thumbnailUrl, sourceUrl, adminPassword, fetchExistingComponents]);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "var(--bg)",
-        color: "var(--text-primary)",
-      }}
-    >
+    <div className="min-h-screen bg-canvas text-ink">
       {/* Header */}
-      <header
-        style={{
-          borderBottom: "1px solid var(--border)",
-          padding: "16px 24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a
-            href="/"
-            style={{
-              color: "var(--text-muted)",
-              textDecoration: "none",
-              fontSize: 14,
-            }}
-          >
-            ← Back to catalog
-          </a>
-          <span style={{ color: "var(--text-muted)" }}>·</span>
-          <h1 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>
-            Admin — Extract Components
-          </h1>
+      <div className="border-b border-line px-5 py-4 sm:px-8">
+        <div className="flex items-center gap-2 text-[13px] text-ink-3">
+          <a href="/library" className="transition-colors hover:text-ink">Library</a>
+          <span className="text-ink-4">/</span>
+          <span>Admin — Extract Components</span>
         </div>
-      </header>
+      </div>
 
-      <main style={{ maxWidth: 640, margin: "0 auto", padding: "40px 24px" }}>
+      <main className="mx-auto max-w-[640px] px-6 py-10">
         {/* Manage Existing Components */}
-        <section style={{ marginBottom: 48 }}>
-          <h2
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              color: "var(--text-muted)",
-              margin: "0 0 8px",
-            }}
-          >
+        <section className="mb-12">
+          <h2 className="mb-2 text-[13px] font-semibold uppercase tracking-[0.05em] text-ink-3">
             Manage
           </h2>
-          <p style={{ fontSize: 20, fontWeight: 600, margin: "0 0 16px" }}>
+          <p className="mb-4 text-[20px] font-semibold">
             Existing Components
           </p>
 
-          <div style={{ marginBottom: 16 }}>
+          <div className="mb-4">
             <Field label="Admin Password" hint="Required for delete">
               <input
                 type="password"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
                 placeholder="Enter admin password"
-                style={inputStyle}
+                className="w-full rounded-control border border-line bg-field px-3 py-2.5 text-[14px] text-ink outline-none"
               />
             </Field>
           </div>
 
           {loadingComponents ? (
-            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Loading...</p>
+            <p className="text-[13px] text-ink-3">Loading...</p>
           ) : existingComponents.length === 0 ? (
-            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>No components yet.</p>
+            <p className="text-[13px] text-ink-3">No components yet.</p>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div className="flex flex-col gap-3">
               {existingComponents.map((comp) => (
                 <div
                   key={comp.id}
-                  style={{
-                    padding: "14px",
-                    background: "var(--bg-elevated)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 10,
-                  }}
+                  className="rounded-[10px] border border-line bg-field p-3.5"
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                  <div className="mb-2.5 flex items-center gap-3">
                     {/* Thumbnail preview */}
-                    <div
-                      style={{
-                        width: 56,
-                        height: 36,
-                        borderRadius: 6,
-                        overflow: "hidden",
-                        background: "var(--bg)",
-                        border: "1px solid var(--border)",
-                        flexShrink: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
+                    <div className="flex h-9 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[6px] border border-line bg-canvas">
                       {comp.thumbnail_url ? (
                         <img
                           src={comp.thumbnail_url}
                           alt=""
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          className="h-full w-full object-cover"
                         />
                       ) : (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "var(--text-muted)", opacity: 0.5 }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-ink-3 opacity-50">
                           <rect x="3" y="3" width="18" height="18" rx="2" />
                           <circle cx="8.5" cy="8.5" r="1.5" />
                           <path d="M21 15l-5-5L5 21" />
                         </svg>
                       )}
                     </div>
-                    <div style={{ minWidth: 0, flex: 1 }}>
-                      <p style={{ fontSize: 14, fontWeight: 500, margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <div className="min-w-0 flex-1">
+                      <p className="overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-medium">
                         {comp.name}
                       </p>
-                      <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "2px 0 0" }}>
+                      <p className="mt-0.5 text-[12px] text-ink-3">
                         {comp.category} · {comp.copy_count} copies
                       </p>
                     </div>
                   </div>
                   {/* Actions row */}
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <div className="flex items-center gap-2">
                     <label
-                      style={{
-                        ...secondaryButtonStyle,
-                        padding: "6px 12px",
-                        fontSize: 12,
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        cursor: uploadingId === comp.id ? "wait" : "pointer",
-                        opacity: uploadingId === comp.id ? 0.5 : 1,
-                        flex: 1,
-                        justifyContent: "center",
-                      }}
+                      className={`flex flex-1 items-center justify-center gap-1.5 rounded-control border border-line bg-field px-3 py-1.5 text-[12px] font-medium text-ink ${
+                        uploadingId === comp.id ? "cursor-wait opacity-50" : "cursor-pointer"
+                      }`}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -387,7 +326,7 @@ export default function AdminPage() {
                       <input
                         type="file"
                         accept="image/png,image/jpeg,image/webp,image/svg+xml"
-                        style={{ display: "none" }}
+                        className="hidden"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (file) handleThumbnailUpload(comp.id, file);
@@ -399,18 +338,9 @@ export default function AdminPage() {
                     <button
                       onClick={() => handleDelete(comp.id, comp.name)}
                       disabled={deletingId === comp.id}
-                      style={{
-                        background: "transparent",
-                        color: "var(--destructive, #ef4444)",
-                        border: "1px solid var(--destructive, #ef4444)",
-                        borderRadius: 8,
-                        padding: "6px 12px",
-                        fontSize: 12,
-                        fontWeight: 500,
-                        cursor: deletingId === comp.id ? "wait" : "pointer",
-                        opacity: deletingId === comp.id ? 0.5 : 1,
-                        whiteSpace: "nowrap",
-                      }}
+                      className={`whitespace-nowrap rounded-control border border-red-400/40 bg-transparent px-3 py-1.5 text-[12px] font-medium text-red-400 ${
+                        deletingId === comp.id ? "cursor-wait opacity-50" : "cursor-pointer"
+                      }`}
                     >
                       {deletingId === comp.id ? "Deleting..." : "Delete"}
                     </button>
@@ -422,31 +352,15 @@ export default function AdminPage() {
         </section>
 
         {/* Step 1: Extract */}
-        <section style={{ marginBottom: 48 }}>
-          <div style={{ marginBottom: 16 }}>
-            <h2
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: "var(--text-muted)",
-                margin: "0 0 8px",
-              }}
-            >
+        <section className="mb-12">
+          <div className="mb-4">
+            <h2 className="mb-2 text-[13px] font-semibold uppercase tracking-[0.05em] text-ink-3">
               Step 1
             </h2>
-            <p style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
+            <p className="text-[20px] font-semibold">
               Extract from Figma
             </p>
-            <p
-              style={{
-                fontSize: 14,
-                color: "var(--text-secondary)",
-                margin: "8px 0 0",
-                lineHeight: 1.5,
-              }}
-            >
+            <p className="mt-2 text-[14px] leading-relaxed text-ink-2">
               Select a component in Figma, copy it (Ctrl+C / Cmd+C), then click
               the button below. The tool reads your clipboard and extracts the
               encoded component data.
@@ -456,42 +370,23 @@ export default function AdminPage() {
           <button
             onClick={handleExtract}
             disabled={isExtracting}
-            style={{
-              background: "var(--accent)",
-              color: "var(--accent-text)",
-              border: "none",
-              borderRadius: 8,
-              padding: "12px 24px",
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: isExtracting ? "wait" : "pointer",
-              opacity: isExtracting ? 0.7 : 1,
-              width: "100%",
-            }}
+            className={`w-full rounded-control bg-ink px-6 py-3 text-[14px] font-medium text-canvas ${
+              isExtracting ? "cursor-wait opacity-70" : "cursor-pointer"
+            }`}
           >
             {isExtracting ? "Reading clipboard..." : "Extract from Clipboard"}
           </button>
 
           {extracted && (
             <div
-              style={{
-                marginTop: 16,
-                padding: 16,
-                background: extracted.isValidFigmaData
-                  ? "var(--success-bg)"
-                  : "var(--bg-elevated)",
-                borderRadius: 8,
-                border: "1px solid var(--border)",
-              }}
+              className={`mt-4 rounded-[8px] border border-line p-4 ${
+                extracted.isValidFigmaData ? "bg-green-400/10" : "bg-field"
+              }`}
             >
               <p
-                style={{
-                  fontSize: 13,
-                  margin: 0,
-                  color: extracted.isValidFigmaData
-                    ? "var(--success)"
-                    : "var(--text-secondary)",
-                }}
+                className={`text-[13px] ${
+                  extracted.isValidFigmaData ? "text-green-400" : "text-ink-2"
+                }`}
               >
                 {extracted.isValidFigmaData
                   ? `✓ Valid Figma data extracted — "${extracted.displayName || "unnamed"}"`
@@ -499,23 +394,17 @@ export default function AdminPage() {
               </p>
               {extracted.isValidFigmaData && (
                 <>
-                  <p
-                    style={{
-                      fontSize: 12,
-                      margin: "4px 0 0",
-                      color: "var(--text-muted)",
-                    }}
-                  >
+                  <p className="mt-1 text-[12px] text-ink-3">
                     figmeta: {extracted.figmeta?.length} chars · figbuffer:{" "}
                     {extracted.figbuffer?.length} chars
                     {extracted.previewImage ? " · preview captured" : " · no preview image"}
                   </p>
                   {extracted.previewImage && (
-                    <div style={{ marginTop: 12, borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)" }}>
+                    <div className="mt-3 overflow-hidden rounded-[8px] border border-line bg-canvas">
                       <img
                         src={extracted.previewImage}
                         alt="Component preview"
-                        style={{ display: "block", maxWidth: "100%", maxHeight: 200, objectFit: "contain", margin: "0 auto" }}
+                        className="mx-auto block max-h-[200px] max-w-full object-contain"
                       />
                     </div>
                   )}
@@ -527,31 +416,22 @@ export default function AdminPage() {
 
         {/* Step 2: Details */}
         {extracted?.isValidFigmaData && (
-          <section style={{ marginBottom: 48 }}>
-            <h2
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: "var(--text-muted)",
-                margin: "0 0 8px",
-              }}
-            >
+          <section className="mb-12">
+            <h2 className="mb-2 text-[13px] font-semibold uppercase tracking-[0.05em] text-ink-3">
               Step 2
             </h2>
-            <p style={{ fontSize: 20, fontWeight: 600, margin: "0 0 24px" }}>
+            <p className="mb-6 text-[20px] font-semibold">
               Component Details
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <div className="flex flex-col gap-5">
               <Field label="Name" required>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Hero Section — Split Layout"
-                  style={inputStyle}
+                  className="w-full rounded-control border border-line bg-field px-3 py-2.5 text-[14px] text-ink outline-none"
                 />
               </Field>
 
@@ -559,7 +439,7 @@ export default function AdminPage() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  style={inputStyle}
+                  className="w-full rounded-control border border-line bg-field px-3 py-2.5 text-[14px] text-ink outline-none"
                 >
                   {CATEGORIES.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -575,7 +455,7 @@ export default function AdminPage() {
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
                   placeholder="hero, landing, split-layout"
-                  style={inputStyle}
+                  className="w-full rounded-control border border-line bg-field px-3 py-2.5 text-[14px] text-ink outline-none"
                 />
               </Field>
 
@@ -585,7 +465,7 @@ export default function AdminPage() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="A brief description of this component..."
                   rows={3}
-                  style={{ ...inputStyle, resize: "vertical" as const }}
+                  className="w-full resize-y rounded-control border border-line bg-field px-3 py-2.5 text-[14px] text-ink outline-none"
                 />
               </Field>
 
@@ -595,7 +475,7 @@ export default function AdminPage() {
                   value={thumbnailUrl}
                   onChange={(e) => setThumbnailUrl(e.target.value)}
                   placeholder="https://your-project.supabase.co/storage/v1/object/public/thumbnails/hero.png"
-                  style={inputStyle}
+                  className="w-full rounded-control border border-line bg-field px-3 py-2.5 text-[14px] text-ink outline-none"
                 />
               </Field>
 
@@ -605,7 +485,7 @@ export default function AdminPage() {
                   value={sourceUrl}
                   onChange={(e) => setSourceUrl(e.target.value)}
                   placeholder="https://www.figma.com/file/..."
-                  style={inputStyle}
+                  className="w-full rounded-control border border-line bg-field px-3 py-2.5 text-[14px] text-ink outline-none"
                 />
               </Field>
             </div>
@@ -615,31 +495,20 @@ export default function AdminPage() {
         {/* Step 3: Test & Save */}
         {extracted?.isValidFigmaData && (
           <section>
-            <h2
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: "var(--text-muted)",
-                margin: "0 0 8px",
-              }}
-            >
+            <h2 className="mb-2 text-[13px] font-semibold uppercase tracking-[0.05em] text-ink-3">
               Step 3
             </h2>
-            <p style={{ fontSize: 20, fontWeight: 600, margin: "0 0 24px" }}>
+            <p className="mb-6 text-[20px] font-semibold">
               Test & Save
             </p>
 
-            <div style={{ display: "flex", gap: 12 }}>
+            <div className="flex gap-3">
               <button
                 onClick={handleTestPaste}
                 disabled={isTesting}
-                style={{
-                  ...secondaryButtonStyle,
-                  opacity: isTesting ? 0.7 : 1,
-                  flex: 1,
-                }}
+                className={`flex-1 rounded-control border border-line bg-field px-6 py-3 text-[14px] font-medium text-ink ${
+                  isTesting ? "opacity-70" : ""
+                }`}
               >
                 {isTesting ? "Copied!" : "Test Paste → Copy to Clipboard"}
               </button>
@@ -647,32 +516,15 @@ export default function AdminPage() {
               <button
                 onClick={handleSave}
                 disabled={isSaving || !name.trim()}
-                style={{
-                  background: "var(--accent)",
-                  color: "var(--accent-text)",
-                  border: "none",
-                  borderRadius: 8,
-                  padding: "12px 24px",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  cursor:
-                    isSaving || !name.trim() ? "not-allowed" : "pointer",
-                  opacity: isSaving || !name.trim() ? 0.5 : 1,
-                  flex: 1,
-                }}
+                className={`flex-1 rounded-control bg-ink px-6 py-3 text-[14px] font-medium text-canvas ${
+                  isSaving || !name.trim() ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                }`}
               >
                 {isSaving ? "Saving..." : "Save to Library"}
               </button>
             </div>
 
-            <p
-              style={{
-                fontSize: 12,
-                color: "var(--text-muted)",
-                marginTop: 12,
-                lineHeight: 1.5,
-              }}
-            >
+            <p className="mt-3 text-[12px] leading-relaxed text-ink-3">
               Tip: Click "Test Paste" first, switch to Figma, and press Ctrl+V
               to verify the component pastes correctly before saving.
             </p>
@@ -697,28 +549,14 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label style={{ display: "block" }}>
-      <span
-        style={{
-          display: "block",
-          fontSize: 13,
-          fontWeight: 500,
-          marginBottom: 6,
-          color: "var(--text-primary)",
-        }}
-      >
+    <label className="block">
+      <span className="mb-1.5 block text-[13px] font-medium text-ink">
         {label}
         {required && (
-          <span style={{ color: "var(--destructive)", marginLeft: 2 }}>*</span>
+          <span className="ml-0.5 text-red-400">*</span>
         )}
         {hint && (
-          <span
-            style={{
-              fontWeight: 400,
-              color: "var(--text-muted)",
-              marginLeft: 8,
-            }}
-          >
+          <span className="ml-2 font-normal text-ink-3">
             {hint}
           </span>
         )}
@@ -727,27 +565,3 @@ function Field({
     </label>
   );
 }
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  background: "var(--bg-input)",
-  color: "var(--text-primary)",
-  border: "1px solid var(--border)",
-  borderRadius: 8,
-  outline: "none",
-  boxSizing: "border-box",
-  fontFamily: "inherit",
-};
-
-const secondaryButtonStyle: React.CSSProperties = {
-  background: "var(--bg-elevated)",
-  color: "var(--text-primary)",
-  border: "1px solid var(--border)",
-  borderRadius: 8,
-  padding: "12px 24px",
-  fontSize: 14,
-  fontWeight: 500,
-  cursor: "pointer",
-};
