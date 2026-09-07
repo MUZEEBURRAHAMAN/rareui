@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
@@ -9,7 +10,9 @@ const NAV_LINKS = [
 ];
 
 function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
+  if (href === "/") {
+    return pathname === "/" || pathname.startsWith("/components/");
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -18,7 +21,7 @@ export function SiteHeader() {
 
   return (
     <nav className="mx-auto flex max-w-4xl items-center justify-between px-5 py-4 sm:px-8">
-      <a
+      <Link
         href="/"
         className="flex items-center gap-2 text-[15px] font-bold tracking-tight text-ink transition-opacity hover:opacity-80"
       >
@@ -26,12 +29,12 @@ export function SiteHeader() {
         <span className="rounded-full border border-line px-2 py-0.5 text-[10px] font-medium text-ink-4">
           Beta
         </span>
-      </a>
+      </Link>
       <div className="flex items-center gap-3">
         {NAV_LINKS.map((link) => {
           const active = isActive(pathname, link.href);
           return (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className={
@@ -41,7 +44,7 @@ export function SiteHeader() {
               }
             >
               {link.label}
-            </a>
+            </Link>
           );
         })}
         <a

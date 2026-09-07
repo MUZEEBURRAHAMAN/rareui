@@ -309,6 +309,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 ```tsx
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
@@ -318,7 +319,9 @@ const NAV_LINKS = [
 ];
 
 function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
+  if (href === "/") {
+    return pathname === "/" || pathname.startsWith("/components/");
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -327,7 +330,7 @@ export function SiteHeader() {
 
   return (
     <nav className="mx-auto flex max-w-4xl items-center justify-between px-5 py-4 sm:px-8">
-      <a
+      <Link
         href="/"
         className="flex items-center gap-2 text-[15px] font-bold tracking-tight text-ink transition-opacity hover:opacity-80"
       >
@@ -335,12 +338,12 @@ export function SiteHeader() {
         <span className="rounded-full border border-line px-2 py-0.5 text-[10px] font-medium text-ink-4">
           Beta
         </span>
-      </a>
+      </Link>
       <div className="flex items-center gap-3">
         {NAV_LINKS.map((link) => {
           const active = isActive(pathname, link.href);
           return (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className={
@@ -350,7 +353,7 @@ export function SiteHeader() {
               }
             >
               {link.label}
-            </a>
+            </Link>
           );
         })}
         <a
@@ -370,7 +373,7 @@ export function SiteHeader() {
 }
 ```
 
-Active-link detection: `/` only matches exactly (so it doesn't stay highlighted on `/components/edge-stepper` etc. — those pages show no top-level nav item active, which is correct since they're sub-pages of the Components section reached via card clicks, not the nav itself); `/library` and `/figma-to-code` match themselves or any sub-path (so `/library/admin` still highlights "Library").
+**Corrected after Task 16's full nav sweep caught two real defects in this original design:** (1) `/` was originally scoped to match ONLY exactly, so `/components/*` detail pages showed no active nav item — this directly contradicted Task 16's own verification checklist, which expects "Components" to stay active on sub-pages (the more standard nav UX pattern); `isActive()` now also prefix-matches `/components/`. (2) All internal nav links used plain `<a>` tags, causing full-page reloads instead of Next.js client-side routing (confirmed via network log: fresh document GET + re-versioned chunks per click) — replaced with `next/link`'s `Link` component for the logo and the three `NAV_LINKS` entries; the external GitHub link stays a plain `<a target="_blank">` since it isn't an internal route. `/library` and `/figma-to-code` still match themselves or any sub-path (so `/library/admin` still highlights "Library").
 
 - [ ] **Step 2: Render `SiteHeader` from the root layout**
 
