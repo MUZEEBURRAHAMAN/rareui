@@ -1,11 +1,24 @@
 import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "RareUI — Figma Component Library",
+  title: "RareUI — UI Components & Figma Library",
   description:
-    "Browse and copy UI components directly into Figma. No plugins needed.",
+    "Copy-paste UI components for React, plus a community Figma library you can paste straight into Figma.",
 };
 
 export default function RootLayout({
@@ -14,16 +27,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body>
         {children}
         <Toaster
           position="bottom-center"
           toastOptions={{
             style: {
-              background: "var(--bg-card)",
-              color: "var(--text-primary)",
-              border: "1px solid var(--border)",
+              background: "var(--color-surface)",
+              color: "var(--color-ink)",
+              border: "1px solid var(--color-line)",
             },
           }}
         />

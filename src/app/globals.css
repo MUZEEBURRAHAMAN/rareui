@@ -1,70 +1,175 @@
 @import "tailwindcss";
 
-:root {
-  --bg: #fafafa;
-  --bg-card: #ffffff;
-  --bg-elevated: #f4f4f5;
-  --bg-input: #ffffff;
-  --text-primary: #09090b;
-  --text-secondary: #52525b;
-  --text-muted: #a1a1aa;
-  --border: #e4e4e7;
-  --border-strong: #d4d4d8;
-  --accent: #18181b;
-  --accent-text: #fafafa;
-  --accent-hover: #27272a;
-  --success: #16a34a;
-  --success-bg: #dcfce7;
-  --destructive: #dc2626;
-  --ring: #a1a1aa;
+/* ─── Custom theme tokens ─── */
+@theme {
+  --color-canvas: #ffffff;
+  --color-surface: #f9f9fb;
+  --color-field: #f1f1f5;
+  --color-hover: #ebebf0;
+  --color-line: #e4e4ea;
+  --color-ink: #1a1a2e;
+  --color-ink-2: #5a5a72;
+  --color-ink-3: #8a8aa0;
+  --color-ink-4: #b0b0c0;
+  --color-accent: #7c5cfc;
+  --color-accent-dim: rgba(124, 92, 252, 0.08);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-window: 12px;
+  --radius-control: 6px;
+
+  --shadow-hairline: 0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-btn: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
+/* ─── Dark mode tokens ─── */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #09090b;
-    --bg-card: #18181b;
-    --bg-elevated: #27272a;
-    --bg-input: #1c1c1f;
-    --text-primary: #fafafa;
-    --text-secondary: #a1a1aa;
-    --text-muted: #71717a;
-    --border: #27272a;
-    --border-strong: #3f3f46;
-    --accent: #fafafa;
-    --accent-text: #09090b;
-    --accent-hover: #e4e4e7;
-    --success: #4ade80;
-    --success-bg: #052e16;
-    --destructive: #f87171;
-    --ring: #52525b;
+    --color-canvas: #0e0e12;
+    --color-surface: #18181e;
+    --color-field: #1e1e26;
+    --color-hover: #26262f;
+    --color-line: #2a2a36;
+    --color-ink: #e4e3eb;
+    --color-ink-2: #a8a8be;
+    --color-ink-3: #6b6b82;
+    --color-ink-4: #4a4a5e;
+    --color-accent: #8b7bf7;
+    --color-accent-dim: rgba(139, 123, 247, 0.12);
+
+    --shadow-hairline: 0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-btn: 0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 1px 2px rgba(0, 0, 0, 0.3);
   }
 }
 
-:root[data-theme="dark"] {
-  --bg: #09090b;
-  --bg-card: #18181b;
-  --bg-elevated: #27272a;
-  --bg-input: #1c1c1f;
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --border: #27272a;
-  --border-strong: #3f3f46;
-  --accent: #fafafa;
-  --accent-text: #09090b;
-  --accent-hover: #e4e4e7;
-  --success: #4ade80;
-  --success-bg: #052e16;
-  --destructive: #f87171;
-  --ring: #52525b;
+[data-theme="dark"] {
+  --color-canvas: #0e0e12;
+  --color-surface: #18181e;
+  --color-field: #1e1e26;
+  --color-hover: #26262f;
+  --color-line: #2a2a36;
+  --color-ink: #e4e3eb;
+  --color-ink-2: #a8a8be;
+  --color-ink-3: #6b6b82;
+  --color-ink-4: #4a4a5e;
+  --color-accent: #8b7bf7;
+  --color-accent-dim: rgba(139, 123, 247, 0.12);
+
+  --shadow-hairline: 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-btn: 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+/* Scoped light theme — lets a container override dark-mode for preview */
+[data-theme="light"] {
+  --color-canvas: #ffffff;
+  --color-surface: #f9f9fb;
+  --color-field: #f1f1f5;
+  --color-hover: #ebebf0;
+  --color-line: #e4e4ea;
+  --color-ink: #1a1a2e;
+  --color-ink-2: #5a5a72;
+  --color-ink-3: #8a8aa0;
+  --color-ink-4: #b0b0c0;
+  --color-accent: #7c5cfc;
+  --color-accent-dim: rgba(124, 92, 252, 0.08);
+
+  --shadow-hairline: 0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-btn: 0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Keyframes ─── */
+@keyframes pixel-on {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+
+@keyframes shimmer-text {
+  0% { background-position: 200% 50%; }
+  100% { background-position: -200% 50%; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 12px) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  to { opacity: 0; transform: translate(-50%, 8px) scale(0.95); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes field-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes step-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes surfer-wave {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+/* ─── Base ─── */
 body {
-  background: var(--bg);
-  color: var(--text-primary);
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Adaptive form animations ─── */
+.animate-field-in {
+  animation: field-in 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.animate-step-in {
+  animation: step-in 350ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 /* ─── Toaster overrides ─────────────────────────────────── */
