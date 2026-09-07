@@ -16,28 +16,16 @@ export function SearchBar({
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div
-      style={{
-        position: "relative",
-        maxWidth: 320,
-        width: "100%",
-      }}
-    >
+    <div className="relative w-full max-w-[320px]">
       <svg
         width="16"
         height="16"
         viewBox="0 0 16 16"
         fill="none"
-        stroke="var(--text-muted)"
+        stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
-        style={{
-          position: "absolute",
-          left: 12,
-          top: "50%",
-          transform: "translateY(-50%)",
-          pointerEvents: "none",
-        }}
+        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-3"
       >
         <circle cx="7" cy="7" r="4.5" />
         <path d="M10.5 10.5L14 14" />
@@ -48,24 +36,7 @@ export function SearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        style={{
-          width: "100%",
-          padding: "9px 12px 9px 36px",
-          fontSize: 14,
-          fontFamily: "inherit",
-          background: "var(--bg-input)",
-          color: "var(--text-primary)",
-          border: "1px solid var(--border)",
-          borderRadius: 8,
-          outline: "none",
-          boxSizing: "border-box",
-        }}
-        onFocus={(e) => {
-          e.currentTarget.style.borderColor = "var(--border-strong)";
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.borderColor = "var(--border)";
-        }}
+        className="box-border w-full rounded-control border border-line bg-field py-2.5 pl-9 pr-3 text-[14px] font-[inherit] text-ink outline-none focus:border-line focus:outline-none"
       />
       {value && (
         <button
@@ -73,23 +44,7 @@ export function SearchBar({
             onChange("");
             inputRef.current?.focus();
           }}
-          style={{
-            position: "absolute",
-            right: 8,
-            top: "50%",
-            transform: "translateY(-50%)",
-            background: "var(--bg-elevated)",
-            border: "none",
-            borderRadius: 4,
-            width: 20,
-            height: 20,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            color: "var(--text-muted)",
-            fontSize: 12,
-          }}
+          className="absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded border-none bg-hover text-[12px] text-ink-3"
         >
           ✕
         </button>

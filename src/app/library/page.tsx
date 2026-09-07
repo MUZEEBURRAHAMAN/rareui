@@ -69,45 +69,21 @@ export default function CatalogPage() {
   }, [search, selectedCategory, fetchComponents]);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px" }}>
+    <div className="min-h-screen bg-canvas">
+      <main className="mx-auto max-w-[1200px] px-6 py-8">
         {/* Hero */}
-        <div style={{ marginBottom: 32 }}>
-          <h1
-            style={{
-              fontSize: 28,
-              fontWeight: 700,
-              margin: "0 0 8px",
-              letterSpacing: "-0.02em",
-            }}
-          >
+        <div className="mb-8">
+          <h1 className="m-0 mb-2 text-[28px] font-bold tracking-[-0.02em] text-ink">
             UI Components
           </h1>
-          <p
-            style={{
-              fontSize: 15,
-              color: "var(--text-secondary)",
-              margin: 0,
-              maxWidth: "42em",
-              lineHeight: 1.5,
-            }}
-          >
+          <p className="m-0 max-w-[42em] text-[15px] leading-[1.5] text-ink-3">
             Browse components, click copy, paste into Figma. No plugins, no
             extensions — just Ctrl+V.
           </p>
         </div>
 
         {/* Filters */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 16,
-            marginBottom: 24,
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <CategoryFilter
             categories={categories}
             selected={selectedCategory}
@@ -117,13 +93,7 @@ export default function CatalogPage() {
         </div>
 
         {/* Results count */}
-        <div
-          style={{
-            fontSize: 13,
-            color: "var(--text-muted)",
-            marginBottom: 16,
-          }}
-        >
+        <div className="mb-4 text-[13px] text-ink-3">
           {loading
             ? "Loading..."
             : `${total} component${total !== 1 ? "s" : ""}`}
@@ -133,13 +103,7 @@ export default function CatalogPage() {
         {!loading && components.length === 0 ? (
           <EmptyState hasSearch={!!search || selectedCategory !== "all"} />
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: 16,
-            }}
-          >
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
             {loading
               ? Array.from({ length: 6 }).map((_, i) => (
                   <SkeletonCard key={i} />
@@ -157,16 +121,7 @@ export default function CatalogPage() {
       />
 
       {/* Footer */}
-      <footer
-        style={{
-          borderTop: "1px solid var(--border)",
-          padding: "24px",
-          textAlign: "center",
-          fontSize: 13,
-          color: "var(--text-muted)",
-          marginTop: 64,
-        }}
-      >
+      <footer className="mt-16 border-t border-line px-6 py-6 text-center text-[13px] text-ink-3">
         Built with RareUI · Copy components, paste into Figma
       </footer>
     </div>
@@ -175,13 +130,7 @@ export default function CatalogPage() {
 
 function EmptyState({ hasSearch }: { hasSearch: boolean }) {
   return (
-    <div
-      style={{
-        padding: "80px 24px",
-        textAlign: "center",
-        color: "var(--text-muted)",
-      }}
-    >
+    <div className="px-6 py-20 text-center text-ink-3">
       <svg
         width="48"
         height="48"
@@ -191,17 +140,17 @@ function EmptyState({ hasSearch }: { hasSearch: boolean }) {
         strokeWidth="1"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ margin: "0 auto 16px", opacity: 0.5 }}
+        className="mx-auto mb-4 opacity-50"
       >
         <rect x="3" y="3" width="7" height="7" rx="1" />
         <rect x="14" y="3" width="7" height="7" rx="1" />
         <rect x="3" y="14" width="7" height="7" rx="1" />
         <rect x="14" y="14" width="7" height="7" rx="1" />
       </svg>
-      <p style={{ fontSize: 15, fontWeight: 500, margin: "0 0 8px" }}>
+      <p className="m-0 mb-2 text-[15px] font-medium text-ink">
         {hasSearch ? "No components found" : "No components yet"}
       </p>
-      <p style={{ fontSize: 13, margin: 0 }}>
+      <p className="m-0 text-[13px] text-ink-3">
         {hasSearch
           ? "Try a different search or category."
           : "Go to Admin to extract and upload your first Figma component."}
@@ -212,48 +161,12 @@ function EmptyState({ hasSearch }: { hasSearch: boolean }) {
 
 function SkeletonCard() {
   return (
-    <div
-      style={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: 12,
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          aspectRatio: "16/10",
-          background: "var(--bg-elevated)",
-          animation: "pulse 1.5s ease-in-out infinite",
-        }}
-      />
-      <div style={{ padding: "12px 14px 14px" }}>
-        <div
-          style={{
-            height: 14,
-            width: "60%",
-            background: "var(--bg-elevated)",
-            borderRadius: 4,
-            marginBottom: 8,
-            animation: "pulse 1.5s ease-in-out infinite",
-          }}
-        />
-        <div
-          style={{
-            height: 12,
-            width: "40%",
-            background: "var(--bg-elevated)",
-            borderRadius: 4,
-            animation: "pulse 1.5s ease-in-out infinite",
-          }}
-        />
+    <div className="overflow-hidden rounded-[12px] border border-line bg-surface">
+      <div className="aspect-[16/10] animate-pulse bg-field" />
+      <div className="px-3.5 pb-3.5 pt-3">
+        <div className="mb-2 h-3.5 w-[60%] animate-pulse rounded bg-field" />
+        <div className="h-3 w-[40%] animate-pulse rounded bg-field" />
       </div>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
     </div>
   );
 }

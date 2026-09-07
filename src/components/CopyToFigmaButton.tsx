@@ -77,40 +77,24 @@ export function CopyToFigmaButton({
     error: errorIcon,
   }[status];
 
+  const colorClasses =
+    status === "copied"
+      ? "bg-green-500/15 text-green-400"
+      : status === "error"
+        ? "bg-red-500/15 text-red-400"
+        : "bg-ink text-canvas";
+
   return (
     <button
       onClick={handleCopy}
       disabled={status === "loading"}
       title="Copy component — paste in Figma with Ctrl+V"
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: isSmall ? 4 : 6,
-        padding: isSmall ? "6px 10px" : "8px 14px",
-        fontSize: isSmall ? 12 : 13,
-        fontWeight: 500,
-        fontFamily: "inherit",
-        background:
-          status === "copied"
-            ? "var(--success-bg)"
-            : status === "error"
-              ? "#fef2f2"
-              : "var(--accent)",
-        color:
-          status === "copied"
-            ? "var(--success)"
-            : status === "error"
-              ? "var(--destructive)"
-              : "var(--accent-text)",
-        border: "none",
-        borderRadius: 6,
-        cursor: status === "loading" ? "wait" : "pointer",
-        transition: "all 150ms ease",
-        whiteSpace: "nowrap",
-      }}
+      className={`inline-flex items-center whitespace-nowrap rounded-control border-none font-[inherit] font-medium transition-all ${
+        isSmall ? "gap-1 px-2.5 py-1.5 text-[12px]" : "gap-1.5 px-3.5 py-2 text-[13px]"
+      } ${status === "loading" ? "cursor-wait" : "cursor-pointer"} ${colorClasses}`}
     >
       <span
-        style={{ display: "flex", width: isSmall ? 14 : 16, height: isSmall ? 14 : 16 }}
+        className={isSmall ? "flex h-3.5 w-3.5" : "flex h-4 w-4"}
         dangerouslySetInnerHTML={{ __html: icon }}
       />
       {label}

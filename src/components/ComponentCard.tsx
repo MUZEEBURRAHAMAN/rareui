@@ -11,58 +11,22 @@ interface ComponentCardProps {
 export function ComponentCard({ component, onClick }: ComponentCardProps) {
   return (
     <div
-      style={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: 12,
-        overflow: "hidden",
-        transition: "border-color 150ms ease, box-shadow 150ms ease",
-        cursor: onClick ? "pointer" : undefined,
-      }}
+      className={`overflow-hidden rounded-[12px] border border-line/60 bg-surface transition-[border-color,box-shadow] duration-150 hover:border-line hover:shadow-[0_2px_20px_rgba(0,0,0,0.15)] ${
+        onClick ? "cursor-pointer" : ""
+      }`}
       onClick={onClick}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "var(--border-strong)";
-        e.currentTarget.style.boxShadow =
-          "0 4px 12px rgba(0,0,0,0.06)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = "var(--border)";
-        e.currentTarget.style.boxShadow = "none";
-      }}
     >
       {/* Thumbnail */}
-      <div
-        style={{
-          aspectRatio: "16/10",
-          background: "var(--bg-elevated)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
+      <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden bg-field">
         {component.thumbnail_url ? (
           <img
             src={component.thumbnail_url}
             alt={component.name}
             loading="lazy"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 8,
-              color: "var(--text-muted)",
-            }}
-          >
+          <div className="flex flex-col items-center gap-2 text-ink-3">
             <svg
               width="32"
               height="32"
@@ -78,82 +42,33 @@ export function ComponentCard({ component, onClick }: ComponentCardProps) {
               <rect x="3" y="14" width="7" height="7" rx="1" />
               <rect x="14" y="14" width="7" height="7" rx="1" />
             </svg>
-            <span style={{ fontSize: 12 }}>No preview</span>
+            <span className="text-[12px]">No preview</span>
           </div>
         )}
       </div>
 
       {/* Info */}
-      <div style={{ padding: "12px 14px 14px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: 8,
-            marginBottom: 8,
-          }}
-        >
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <h3
-              style={{
-                fontSize: 14,
-                fontWeight: 600,
-                margin: 0,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
+      <div className="px-3.5 pb-3.5 pt-3">
+        <div className="mb-2 flex items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <h3 className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-semibold text-ink">
               {component.name}
             </h3>
             {component.description && (
-              <p
-                style={{
-                  fontSize: 12,
-                  color: "var(--text-secondary)",
-                  margin: "4px 0 0",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
+              <p className="m-0 mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-[12px] text-ink-2">
                 {component.description}
               </p>
             )}
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 8,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span
-              style={{
-                fontSize: 11,
-                fontWeight: 500,
-                textTransform: "uppercase",
-                letterSpacing: "0.04em",
-                padding: "3px 7px",
-                borderRadius: 4,
-                background: "var(--bg-elevated)",
-                color: "var(--text-muted)",
-              }}
-            >
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <span className="rounded bg-field px-[7px] py-[3px] text-[11px] font-medium uppercase tracking-[0.04em] text-ink-3">
               {component.category}
             </span>
             {component.copy_count > 0 && (
-              <span
-                style={{
-                  fontSize: 11,
-                  color: "var(--text-muted)",
-                }}
-              >
+              <span className="text-[11px] text-ink-3">
                 {component.copy_count} copies
               </span>
             )}
