@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useCallback, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { useLazyComponent } from "@/hooks/useLazyComponent";
 import { ActionButton } from "./ActionButton";
 import { AiIcon } from "./AiIcon";
@@ -74,13 +75,22 @@ export const PrimitiveShowcase = memo(function PrimitiveShowcase({
     >
       {/* ── Demo surface ── */}
       <div className="relative">
-        <a
-          href={expandUrl}
-          className="block relative overflow-hidden rounded-[16px] border border-line/60 bg-surface transition-[border-color,box-shadow] duration-200 hover:border-line hover:shadow-[0_2px_20px_rgba(0,0,0,0.15)]"
-          style={{ minHeight }}
-        >
-          {isVisible && children}
-        </a>
+        {expandUrl ? (
+          <Link
+            href={expandUrl}
+            className="block relative overflow-hidden rounded-[16px] border border-line/60 bg-surface transition-[border-color,box-shadow] duration-200 hover:border-line hover:shadow-[0_2px_20px_rgba(0,0,0,0.15)]"
+            style={{ minHeight }}
+          >
+            {isVisible && children}
+          </Link>
+        ) : (
+          <div
+            className="block relative overflow-hidden rounded-[16px] border border-line/60 bg-surface transition-[border-color,box-shadow] duration-200 hover:border-line hover:shadow-[0_2px_20px_rgba(0,0,0,0.15)]"
+            style={{ minHeight }}
+          >
+            {isVisible && children}
+          </div>
+        )}
 
         {/* Action buttons — outside demo surface to avoid event leaking */}
         <div className="pointer-events-none absolute inset-0 z-20">

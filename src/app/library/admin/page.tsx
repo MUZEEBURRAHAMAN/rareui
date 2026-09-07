@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { extractFigmaClipboard, copyToFigmaClipboard, slugify } from "@/lib/clipboard";
 import type { FigmaClipboardData, ComponentCreatePayload, ComponentCard } from "@/lib/types";
 import { toast } from "sonner";
@@ -245,7 +246,7 @@ export default function AdminPage() {
       {/* Header */}
       <div className="border-b border-line px-5 py-4 sm:px-8">
         <div className="flex items-center gap-2 text-[13px] text-ink-3">
-          <a href="/library" className="transition-colors hover:text-ink">Library</a>
+          <Link href="/library" className="transition-colors hover:text-ink">Library</Link>
           <span className="text-ink-4">/</span>
           <span>Admin — Extract Components</span>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { domToFigmaSvg } from "@/utils/domToFigmaSvg";
 import { AiIcon } from "./AiIcon";
 import { PromptModal } from "./PromptModal";
@@ -99,7 +100,7 @@ export const ComponentDetailPage = memo(function ComponentDetailPage({
       {/* ── Breadcrumb ── */}
       <div className="px-5 pt-6 sm:px-8">
         <div className="flex items-center gap-2 text-[13px] text-ink-3">
-          <a href="/" className="transition-colors hover:text-ink">Components</a>
+          <Link href="/" className="transition-colors hover:text-ink">Components</Link>
           <span className="text-ink-4">/</span>
           <span>{categoryGroup}</span>
         </div>
