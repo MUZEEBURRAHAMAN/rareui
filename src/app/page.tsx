@@ -5,7 +5,6 @@ import type { ComponentCard as ComponentCardType, Category } from "@/lib/types";
 import { ComponentCard } from "@/components/ComponentCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { SearchBar } from "@/components/SearchBar";
-import { Header } from "@/components/Header";
 import { ComponentSideSheet } from "@/components/ComponentSideSheet";
 
 // Default categories — used if Supabase isn't configured yet
@@ -71,8 +70,6 @@ export default function CatalogPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <Header />
-
       <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px" }}>
         {/* Hero */}
         <div style={{ marginBottom: 32 }}>
