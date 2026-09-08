@@ -35,7 +35,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — you'll see the component catalog.
+Open [http://localhost:3000](http://localhost:3000) — you'll see the RareUI homepage. The Figma component catalog lives at [http://localhost:3000/library](http://localhost:3000/library).
 
 ---
 
@@ -45,7 +45,7 @@ Open [http://localhost:3000](http://localhost:3000) — you'll see the component
 
 1. Open Figma and select a component you want to add
 2. Copy it (Cmd+C)
-3. Go to [http://localhost:3000/admin](http://localhost:3000/admin)
+3. Go to [http://localhost:3000/library/admin](http://localhost:3000/library/admin)
 4. Click **"Extract from Clipboard"** — the tool reads Figma's encoded clipboard data
 5. Fill in the name, category, tags, and optional thumbnail URL
 6. Click **"Test Paste"** to verify — switch to Figma and Ctrl+V to check it works
@@ -53,7 +53,7 @@ Open [http://localhost:3000](http://localhost:3000) — you'll see the component
 
 ### Browsing & Copying (Catalog)
 
-1. Browse components at [http://localhost:3000](http://localhost:3000)
+1. Browse components at [http://localhost:3000/library](http://localhost:3000/library)
 2. Filter by category or search by name
 3. Click **"Copy to Figma"** on any component
 4. Switch to Figma and press **Ctrl+V / Cmd+V** — the component appears
@@ -69,41 +69,36 @@ RareUI extracts these blobs once (via the admin tool), stores them in Supabase, 
 
 ---
 
-## Project Structure
+## Library-specific files
+
+RareUI is a single unified app now — see [`README.md`](./README.md) for the full project structure. The files specific to the Figma catalog/admin tool this guide covers:
 
 ```
-rareui-components/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx              # Main catalog page
-│   │   ├── layout.tsx            # Root layout
-│   │   ├── globals.css           # Theme tokens (light/dark)
-│   │   ├── admin/page.tsx        # Component extraction tool
-│   │   └── api/
-│   │       ├── components/       # CRUD endpoints
-│   │       │   ├── route.ts      # GET (list) + POST (create)
-│   │       │   └── [id]/
-│   │       │       ├── route.ts      # GET single component
-│   │       │       └── clipboard/
-│   │       │           └── route.ts  # GET clipboard payload only
-│   │       └── copy-event/
-│   │           └── route.ts      # POST copy analytics
-│   ├── components/
-│   │   ├── Header.tsx
-│   │   ├── SearchBar.tsx
-│   │   ├── CategoryFilter.tsx
-│   │   ├── ComponentCard.tsx
-│   │   └── CopyToFigmaButton.tsx
-│   └── lib/
-│       ├── types.ts              # TypeScript interfaces
-│       ├── supabase.ts           # Supabase client
-│       └── clipboard.ts         # Figma clipboard extract/write
-├── supabase/
-│   └── schema.sql                # Database schema
-├── package.json
-├── tsconfig.json
-├── next.config.ts
-└── .env.local.example
+src/
+├── app/
+│   ├── library/page.tsx          # Catalog page (was app/page.tsx)
+│   ├── library/admin/page.tsx    # Extraction tool (was app/admin/page.tsx)
+│   └── api/
+│       ├── components/           # CRUD endpoints
+│       │   ├── route.ts          # GET (list) + POST (create)
+│       │   └── [id]/
+│       │       ├── route.ts          # GET single component
+│       │       └── clipboard/
+│       │           └── route.ts      # GET clipboard payload only
+│       └── copy-event/
+│           └── route.ts          # POST copy analytics
+├── components/
+│   ├── SearchBar.tsx
+│   ├── CategoryFilter.tsx
+│   ├── ComponentCard.tsx
+│   ├── ComponentSideSheet.tsx
+│   └── CopyToFigmaButton.tsx
+└── lib/
+    ├── types.ts                  # TypeScript interfaces
+    ├── supabase.ts                # Supabase client
+    └── clipboard.ts               # Figma clipboard extract/write
+supabase/
+└── schema.sql                     # Database schema
 ```
 
 ---

@@ -27,3 +27,6 @@ npm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# worktree scratch state
+.claude/worktrees/
