@@ -34,6 +34,7 @@ export const ComponentDetailPage = memo(function ComponentDetailPage({
   foundationHref,
   children,
 }: ComponentDetailPageProps) {
+  const [activeTab, setActiveTab] = useState<"preview" | "code">("preview");
   const [previewTheme, setPreviewTheme] = useState<"light" | "dark">("dark");
   const [activeFileIdx, setActiveFileIdx] = useState(0);
   const [copiedInstall, setCopiedInstall] = useState(false);
@@ -121,146 +122,182 @@ export const ComponentDetailPage = memo(function ComponentDetailPage({
         </div>
       </header>
 
-      {/* ── Preview ── */}
+      {/* ── Preview / Code ── */}
       <section className="px-5 sm:px-8">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h2 className="text-[16px] font-semibold text-ink">Preview</h2>
-          <div className="flex items-center gap-1.5">
-            {/* Copy for Figma — editable SVG */}
-            <button
-              type="button"
-              onClick={copyAsSvg}
-              disabled={figmaStatus === "copying"}
-              className="flex items-center gap-1.5 rounded-control border border-accent/40 bg-accent-dim px-2.5 py-1.5 text-[11px] font-medium text-accent transition-colors hover:bg-accent/20 disabled:opacity-50"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-              </svg>
-              {figmaStatus === "copying"
-                ? "Copying…"
-                : figmaStatus === "done"
-                  ? "Copied!"
-                  : "Figma"}
-            </button>
-            {/* AI prompt */}
-            <button
-              type="button"
-              onClick={openPrompt}
-              aria-label="AI prompt"
-              className="flex items-center justify-center rounded-control border border-line p-1.5 text-ink-3 transition-colors hover:bg-hover hover:text-ink"
-            >
-              <AiIcon />
-            </button>
-            {/* Theme toggle */}
+        <div className="overflow-hidden rounded-[16px] border border-line">
+          {/* Toolbar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface px-3 py-2.5">
+            {/* Tab switcher */}
             <div className="flex overflow-hidden rounded-control border border-line">
               <button
                 type="button"
-                onClick={() => setPreviewTheme("light")}
+                onClick={() => setActiveTab("preview")}
                 className={`px-3 py-1.5 text-[12px] font-medium transition-colors ${
-                  previewTheme === "light"
+                  activeTab === "preview"
                     ? "bg-ink text-canvas"
-                    : "bg-surface text-ink-3 hover:text-ink"
+                    : "bg-canvas text-ink-3 hover:text-ink"
                 }`}
               >
-                Light
+                Preview
               </button>
               <button
                 type="button"
-                onClick={() => setPreviewTheme("dark")}
+                onClick={() => setActiveTab("code")}
                 className={`px-3 py-1.5 text-[12px] font-medium transition-colors ${
-                  previewTheme === "dark"
+                  activeTab === "code"
                     ? "bg-ink text-canvas"
-                    : "bg-surface text-ink-3 hover:text-ink"
+                    : "bg-canvas text-ink-3 hover:text-ink"
                 }`}
               >
-                Dark
+                Code
               </button>
             </div>
-          </div>
-        </div>
-        <div
-          ref={previewRef}
-          data-theme={previewTheme}
-          className="relative overflow-hidden rounded-[16px] border border-line"
-          style={{
-            backgroundColor: "var(--color-canvas)",
-            minHeight: 420,
-          }}
-        >
-          {children}
-        </div>
-      </section>
 
-      {/* ── Install ── */}
-      {installCommand && (
-        <section className="px-5 pt-10 sm:px-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[16px] font-semibold text-ink">Install</h2>
-            <button
-              type="button"
-              onClick={copyInstall}
-              className="rounded-control border border-line px-3 py-1.5 text-[12px] font-medium text-ink-3 transition-colors hover:bg-hover hover:text-ink"
-            >
-              {copiedInstall ? "Copied" : "Copy"}
-            </button>
-          </div>
-          <div className="overflow-x-auto rounded-[12px] border border-line bg-surface px-4 py-3">
-            <pre className="font-mono text-[13px] text-ink-2">
-              <span className="mr-2 select-none text-ink-4">$</span>
-              {installCommand}
-            </pre>
-          </div>
-        </section>
-      )}
+            <div className="flex items-center gap-1.5">
+              {/* AI prompt — always available */}
+              <button
+                type="button"
+                onClick={openPrompt}
+                aria-label="AI prompt"
+                className="flex items-center justify-center rounded-control border border-line p-1.5 text-ink-3 transition-colors hover:bg-hover hover:text-ink"
+              >
+                <AiIcon />
+              </button>
 
-      {/* ── Code ── */}
-      <section className="px-5 pt-10 sm:px-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[16px] font-semibold text-ink">Code</h2>
-          <button
-            type="button"
-            onClick={copyCode}
-            className="rounded-control border border-line px-3 py-1.5 text-[12px] font-medium text-ink-3 transition-colors hover:bg-hover hover:text-ink"
-          >
-            {copiedCode ? "Copied" : "Copy"}
-          </button>
-        </div>
-        <div className="overflow-hidden rounded-[12px] border border-line">
-          {/* File tabs */}
-          {files.length > 1 && (
-            <div className="flex overflow-x-auto border-b border-line bg-surface">
-              {files.map((file, idx) => (
+              {activeTab === "preview" ? (
+                <>
+                  {/* Copy for Figma — editable SVG */}
+                  <button
+                    type="button"
+                    onClick={copyAsSvg}
+                    disabled={figmaStatus === "copying"}
+                    aria-label="Copy for Figma"
+                    title={
+                      figmaStatus === "copying"
+                        ? "Copying…"
+                        : figmaStatus === "done"
+                          ? "Copied!"
+                          : "Copy for Figma"
+                    }
+                    className="flex items-center justify-center rounded-control border border-accent/40 bg-accent-dim p-1.5 text-accent transition-colors hover:bg-accent/20 disabled:opacity-50"
+                  >
+                    {figmaStatus === "done" ? (
+                      <CheckIconMini />
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </svg>
+                    )}
+                  </button>
+                  {/* Theme toggle */}
+                  <div className="flex overflow-hidden rounded-control border border-line">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewTheme("light")}
+                      aria-label="Light theme"
+                      className={`px-2.5 py-1.5 text-[12px] font-medium transition-colors ${
+                        previewTheme === "light"
+                          ? "bg-ink text-canvas"
+                          : "bg-canvas text-ink-3 hover:text-ink"
+                      }`}
+                    >
+                      Light
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewTheme("dark")}
+                      aria-label="Dark theme"
+                      className={`px-2.5 py-1.5 text-[12px] font-medium transition-colors ${
+                        previewTheme === "dark"
+                          ? "bg-ink text-canvas"
+                          : "bg-canvas text-ink-3 hover:text-ink"
+                      }`}
+                    >
+                      Dark
+                    </button>
+                  </div>
+                </>
+              ) : (
+                /* Copy code — Code tab only */
                 <button
-                  key={file.name}
                   type="button"
-                  onClick={() => setActiveFileIdx(idx)}
-                  className={`shrink-0 border-b-2 px-4 py-2.5 font-mono text-[12px] transition-colors ${
-                    idx === activeFileIdx
-                      ? "border-accent bg-canvas text-ink"
-                      : "border-transparent text-ink-3 hover:bg-hover hover:text-ink-2"
-                  }`}
+                  onClick={copyCode}
+                  aria-label="Copy code"
+                  title={copiedCode ? "Copied!" : "Copy code"}
+                  className="flex items-center justify-center rounded-control border border-line p-1.5 text-ink-3 transition-colors hover:bg-hover hover:text-ink"
                 >
-                  {file.name}
+                  {copiedCode ? <CheckIconMini /> : <CopyIconMini />}
                 </button>
-              ))}
+              )}
+
+              {/* Install path chip */}
+              {installCommand && (
+                <button
+                  type="button"
+                  onClick={copyInstall}
+                  title={copiedInstall ? "Copied!" : installCommand}
+                  className="flex max-w-[180px] items-center gap-1.5 rounded-control border border-line bg-canvas px-2.5 py-1.5 text-[11px] font-medium text-ink-3 transition-colors hover:bg-hover hover:text-ink"
+                >
+                  <span className="truncate font-mono">
+                    {installCommand.replace(/^npx\s+/, "")}
+                  </span>
+                  {copiedInstall ? <CheckIconMini /> : <CopyIconMini />}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Preview pane — stays mounted (Figma export needs the live DOM), just hidden on the Code tab */}
+          <div
+            ref={previewRef}
+            data-theme={previewTheme}
+            className={`relative overflow-hidden ${activeTab === "preview" ? "block" : "hidden"}`}
+            style={{
+              backgroundColor: "var(--color-canvas)",
+              minHeight: 420,
+            }}
+          >
+            {children}
+          </div>
+
+          {/* Code pane */}
+          {activeTab === "code" && (
+            <div>
+              {files.length > 1 && (
+                <div className="flex overflow-x-auto border-b border-line bg-surface">
+                  {files.map((file, idx) => (
+                    <button
+                      key={file.name}
+                      type="button"
+                      onClick={() => setActiveFileIdx(idx)}
+                      className={`shrink-0 border-b-2 px-4 py-2.5 font-mono text-[12px] transition-colors ${
+                        idx === activeFileIdx
+                          ? "border-accent bg-canvas text-ink"
+                          : "border-transparent text-ink-3 hover:bg-hover hover:text-ink-2"
+                      }`}
+                    >
+                      {file.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="max-h-[600px] overflow-auto bg-canvas p-4 sm:p-5">
+                <pre className="font-mono text-[12.5px] leading-[1.7]">
+                  <code>
+                    {activeFile?.code.split("\n").map((line, i) => (
+                      <div key={i} className="flex">
+                        <span className="mr-4 inline-block w-8 select-none text-right text-ink-4/50">
+                          {i + 1}
+                        </span>
+                        <SyntaxLine text={line} />
+                      </div>
+                    ))}
+                  </code>
+                </pre>
+              </div>
             </div>
           )}
-          {/* Code body */}
-          <div className="max-h-[600px] overflow-auto bg-canvas p-4 sm:p-5">
-            <pre className="font-mono text-[12.5px] leading-[1.7]">
-              <code>
-                {activeFile?.code.split("\n").map((line, i) => (
-                  <div key={i} className="flex">
-                    <span className="mr-4 inline-block w-8 select-none text-right text-ink-4/50">
-                      {i + 1}
-                    </span>
-                    <SyntaxLine text={line} />
-                  </div>
-                ))}
-              </code>
-            </pre>
-          </div>
         </div>
       </section>
 
@@ -306,6 +343,23 @@ export const ComponentDetailPage = memo(function ComponentDetailPage({
     </div>
   );
 });
+
+function CopyIconMini() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+function CheckIconMini() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 6L9 17l-5-5" />
+    </svg>
+  );
+}
 
 /* Simple syntax highlight for JSX/TS */
 function SyntaxLine({ text }: { text: string }) {
